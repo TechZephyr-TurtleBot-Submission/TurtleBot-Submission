@@ -330,6 +330,15 @@ technical rulebook. If anything here conflicts with the official rulebook, the r
 - **Submission:** you submit your **modified workspace repo**. Once submitted, **no further
   changes are allowed** — any change made to the repo after submission may lead to
   disqualification. Make sure what you push is what you intend to be judged on.
+  
+### Team Information
+
+| Field                     | Details                       |
+| ------------------------- | ----------------------------- |
+| **Team Name**             | `Your Team Name`              |
+| **Team Leader**           | `Name`                        |
+| **Team Members**          | `Name 1, Name 2, Name 3, ...` |
+| **College / Institution** | `College Name`                |
 
 ### Repository
 - Private GitHub repo, named `TechZephyr_TurtleBot<your_team_name>`.
