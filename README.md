@@ -232,9 +232,29 @@ Confirm it actually landed before moving on:
 ```bash
 ros2 run tf2_ros tf2_echo hunter/odom hunter/base_link
 ```
-And in RViz (same session as Terminal 1), make sure a **TF** or **RobotModel**
-(`Description Topic: /hunter/robot_description`) display shows the hunter's frame/mesh next to
-the runner's in the arena.
+
+**`tz_nav.rviz` only has displays configured for `runner` — the hunter isn't in it.** Add these
+manually in the same RViz window (once, per session) so you can actually see the second robot:
+
+1. **Displays panel → Add → By display type → `RobotModel`**
+   - `Description Topic` → `/hunter/robot_description`
+   - This renders the hunter's mesh at its live TF pose.
+2. **Displays panel → Add → By display type → `TF`**
+   - Enable this if it isn't already on globally — it'll pick up `hunter/base_link`,
+     `hunter/odom`, etc. automatically once the hunter is publishing. Optionally set
+     **Filter (whitelist)** to `hunter/.*` if the tree gets too busy with both robots' frames.
+   - Confirm `hunter/base_link` and `hunter/odom` appear under the TF tree in the Displays panel.
+3. **(Optional) Displays panel → Add → By topic → `/hunter/scan` → `LaserScan`**
+   - Useful once you start writing `hunter_script.py` against LiDAR data — lets you visually
+     confirm the hunter is actually seeing the runner.
+4. **(Optional) Displays panel → Add → By topic → `/hunter/oakd/rgb/image_raw` → `Image`**
+   - Only if you're running `model:=standard` for the hunter and plan to use camera-based
+     tracking; `lite` has no OAK-D camera.
+5. Once set up, **File → Save Config As** and overwrite `tz_nav.rviz` (or save as your own copy)
+   so you don't have to redo this every session.
+
+You should now see both robots' meshes/frames side by side in the arena before moving on to
+Terminal 4.
 
 ### Terminal 4 — start the runner patrol
 
@@ -293,6 +313,67 @@ ros2 topic list | grep -E "runner|hunter"     # both namespaces present and sepa
 ros2 topic hz /runner/odom                     # confirm runner state is actually flowing
 ros2 topic echo /hunter/cmd_vel --once         # confirm hunter is actually publishing commands
 ```
+
+---
+
+## 8. Submission requirements
+
+This challenge is being run as **Round 1 of the Tech Zephyr 4.0 TurtleBot Pursuit & Evasion
+Challenge**. This section summarizes what your submission needs to contain, on top of the
+technical rulebook. If anything here conflicts with the official rulebook, the rulebook wins.
+
+### Timeline
+- **Release (12th):** the arena and a sample Runner node are released. Clone it and get it
+  running on your own system exactly as this guide describes.
+- **Testing window:** you get **2 weeks** to build and test your Catcher (`hunter_script.py`) —
+  and, per the rulebook, your own Runner algorithm too — against the released arena.
+- **Submission:** you submit your **modified workspace repo**. Once submitted, **no further
+  changes are allowed** — any change made to the repo after submission may lead to
+  disqualification. Make sure what you push is what you intend to be judged on.
+
+### Repository
+- Private GitHub repo, named `TechZephyr_TurtleBot<your_team_name>`.
+- Must contain:
+  - Complete Catcher (`hunter_script.py`) source.
+  - Complete Runner algorithm source.
+  - All launch/config/package files needed to actually run your solution — assume the evaluator
+    starts from a clean `turtlebot4_ws` set up per this guide and only adds your repo's contents.
+  - A structured `README.md` covering your approach, algorithm, dependencies, setup, and exact
+    run instructions. Write it so someone who has only read *this* setup guide can get your
+    solution running without asking you anything.
+- **Only TurtleBot4 `lite` is accepted.** Don't submit a solution built or tuned against
+  `standard` — namespaces stay `runner`/`hunter` as covered above, and the model stays `lite`.
+
+### RViz / visual proof requirements
+Your simulation run must be visually verifiable in RViz, not just claimed in the video's audio:
+- **Runner:** must show the `visualize_centroid.py` marker set — centroid sphere **and** the
+  0.5 m green ring — exactly as set up in §6 with `tz_nav.rviz`. Don't disable or replace this.
+- **Hunter:** must have, at minimum, a visible centroid marker and its base_link axes/TF (per the
+  RViz setup block in §6, Terminal 3) — so the evaluator can see it moving and where it thinks it
+  is, not just watch the Gazebo viewport.
+- **Capture check:** the hunter's centroid (or `hunter/base_link` origin) must visibly sit inside
+  the runner's green 0.5 m ring, continuously, for at least 1 second, for the capture to count —
+  this must be clearly visible in RViz in your recording, not just inferred from Gazebo.
+- **If you use additional sensors** (camera, LIDAR-based detection, etc.) for the Catcher's
+  perception, that sensor's output must also be visible in RViz during the recording — e.g. add
+  the raw or an annotated image topic (`.../image_raw`, or your own `.../annotated_image` if
+  you're overlaying detections) as an `Image` display, or the `LaserScan` display for LIDAR. If
+  it's part of how your Catcher perceives the Runner, it needs to be shown, not just used
+  internally.
+
+### Demonstration video
+Must show, with live timestamps visible throughout:
+- Launch of the arena and spawning of both TurtleBots.
+- Start of the match.
+- The hunter's centroid entering and remaining within the runner's 0.5 m radius for at least
+  1 second (the capture moment) — clearly visible in RViz per the requirements above.
+- Any sensor visualizations you're relying on (per the point above), so the evaluator can see
+  what your Catcher is actually perceiving, not just how it moves.
+- Recommended structure and duration are in the rulebook (team intro, Catcher strategy, Runner
+  strategy, brief architecture explanation, Gazebo demo, capture result). Make sure the video is
+  accessible to organizers (correct sharing permissions) before you submit.
+
+---
 
 Ping me when you're ready to start building it out — happy to review approach, debug TF/topic
 issues, or sanity-check pursuit logic as you go.
