@@ -1,4 +1,4 @@
-# TurtleBot4 Tag — Problem Statement
+# TurtleBot4 Pursuit & Evasion Challenge — Problem Statement
 
 **Scenario:** Two TurtleBot4s (`lite` model) share a Gazebo arena. `runner` follows a fixed
 patrol loop. Your job is to build `hunter_script.py` — an autonomous pursuit controller that
@@ -373,7 +373,3 @@ Must show, with live timestamps visible throughout:
   strategy, brief architecture explanation, Gazebo demo, capture result). Make sure the video is
   accessible to organizers (correct sharing permissions) before you submit.
 
----
-
-Ping me when you're ready to start building it out — happy to review approach, debug TF/topic
-issues, or sanity-check pursuit logic as you go.
